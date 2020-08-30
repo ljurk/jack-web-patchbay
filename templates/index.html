@@ -1,0 +1,64 @@
+<html>
+    <head>
+    <style>
+        table {
+            border:solid;
+        }
+
+        td{
+            border:solid;
+        }
+        td.in {
+            color: red;
+        }
+        td.out {
+            color: blue;
+        }
+    </style>
+    </head>
+    <body>
+
+        <table style="border:solid;">
+        <!-- table header : clients-->
+        <tr>
+        <td/>
+        <td class="out">outputs</td>
+
+        {% for clientName, clientData in clients.items() if clientData.output| length != 0%}
+        <td colspan="{{clientData.output | length}}"><b>{{clientName}}</b></td>
+        {% endfor %}
+        </tr>
+        <!-- sub table header : outputs -->
+        <tr>
+        <td class="in">inputs</td>
+        <td/>
+        {% for clientName, clientData in clients.items() %}
+                {% for output in  clientData.output %}
+                <td class="out"> {{output }}</td>
+                {% endfor %}
+        {% endfor %}
+        </tr>
+
+
+
+
+        <!-- one row per input-->
+
+        {% for clientName, clientData in clients.items() if clientData.input | length != 0%}
+        <tr>
+        <td rowspan="{{clientData.input | length }}"><b>{{clientName}}</b></td>
+
+                {% for input in  clientData.input %}
+                {% if not loop.first%}
+                <tr>
+                {% endif %}
+                    <td class="in"> {{input }}</td>
+                </tr>
+                {% endfor %}
+        {% endfor %}
+        </table>
+
+
+
+    </body>
+</html>
