@@ -61,11 +61,29 @@
                     {% for outputClientName, outputClientData in clients.items() if outputClientData.output| length != 0%}
                         {% for outputName, outputData in  outputClientData.output.items() %}
                         <td class="connection">
+                            <form action="/" method="post">
+                                <input type="hidden" id="input" name="input" value="{{clientName}}:{{input}}">
+                                <input type="hidden" id="output" name="output" value="{{outputClientName}}:{{outputName}}">
+                            {% set connected = [] %}
                             {% for con in outputData.connections %}
+
+
+
                                 {% if con == clientName + ":" + input %}
-                                    X                            
+                                <input type="hidden" id="state" name="state" value="disconnect">
+                                <input type="submit" value="X" />
+                                {% if connected.append(1) %}{% endif %}
+
+
                                 {% endif %}
+
+
                             {% endfor %}
+                            {% if not connected %}
+                            <input type="hidden" id="state" name="state" value="connect">
+                            <input type="submit" value="0" />
+                            {% endif %}
+                        </form>
                         </td>
                         {% endfor %}
                     {% endfor %}

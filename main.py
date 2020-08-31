@@ -1,9 +1,24 @@
-from subprocess import check_output, CalledProcessError
-from flask import Flask, render_template
+from subprocess import check_output, CalledProcessError, Popen
+from flask import Flask, render_template, request, redirect
 from flask_restful import Resource, Api, reqparse
 
 app = Flask(__name__)
 api = Api(app)
+
+# add arguments to parser
+parser = reqparse.RequestParser()
+parser.add_argument('input',
+                    type=str,
+                    help='number that will be displayed')
+parser.add_argument('output',
+                    type=str,
+                    help='number that will be displayed')
+parser.add_argument('state',
+                    type=str,
+                    help='number that will be displayed')
+
+
+
 
 
 def parseSections(data):
@@ -22,7 +37,6 @@ def parseSections(data):
             if client.startswith('   '):
                 #connections
                 connections.append(client.strip())
-                print("connection")
                 continue
             name = client.split(':')[0]
             port = client.split(':')[1]
@@ -51,6 +65,23 @@ def getClients():
 class Clients(Resource):
     def get(self):
         return getClients()
+
+    def post(self):
+        print("POST")
+        print(request.referrer)
+        args = parser.parse_args()
+
+        if args['state'] == 'connect':
+            cmd = ['jack_connect']
+
+        elif args['state'] == 'disconnect':
+            cmd = ['jack_disconnect']
+
+        cmd.append(args['input'])
+        cmd.append(args['output'])
+        print(cmd)
+        Popen(cmd)
+        return redirect(request.referrer)
 
 api.add_resource(Clients, '/')
 
