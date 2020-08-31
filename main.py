@@ -1,4 +1,4 @@
-from subprocess import check_output, CalledProcessError, Popen
+from subprocess import check_output, CalledProcessError
 from flask import Flask, render_template, request, redirect
 from flask_restful import Resource, Api, reqparse
 
@@ -8,20 +8,25 @@ api = Api(app)
 # add arguments to parser
 parser = reqparse.RequestParser()
 parser.add_argument('input',
-                    type=str,
-                    help='number that will be displayed')
+                    type=str)
 parser.add_argument('output',
-                    type=str,
-                    help='number that will be displayed')
+                    type=str)
 parser.add_argument('state',
-                    type=str,
-                    help='number that will be displayed')
+                    type=str)
+
+def getClients():
+    try:
+        clients = check_output(['jack_lsp', '-c', '-p']).decode('utf-8')
+    except CalledProcessError:
+        return []
+    if not clients:
+        return []
 
 
+    # split output into sections
+    data = clients.strip().split(',\n')
 
-
-
-def parseSections(data):
+    # parse sections
     clientData = {}
     for section in data:
         name = ""
@@ -47,20 +52,6 @@ def parseSections(data):
 
     return clientData
 
-def getClients():
-    try:
-        clients = check_output(['jack_lsp', '-c', '-p']).decode('utf-8')
-    except CalledProcessError:
-        return []
-    if not clients:
-        return []
-
-
-    # split output into sections
-    sections = clients.strip().split(',\n')
-
-    return parseSections(sections)
-
 
 class Clients(Resource):
     def get(self):
@@ -80,7 +71,7 @@ class Clients(Resource):
         cmd.append(args['input'])
         cmd.append(args['output'])
         print(cmd)
-        Popen(cmd)
+        check_output(cmd)
         return redirect(request.referrer)
 
 api.add_resource(Clients, '/')
