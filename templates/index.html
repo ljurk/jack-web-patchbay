@@ -15,6 +15,9 @@
         td.out {
             color: blue;
         }
+        td.connection {
+            text-align: center;
+        }
     </style>
     </head>
     <body>
@@ -54,7 +57,20 @@
                 <tr>
                 {% endif %}
                     <td class="in"> {{input }}</td>
+                    <!-- connections -->
+                    {% for outputClientName, outputClientData in clients.items() if outputClientData.output| length != 0%}
+                        {% for outputName, outputData in  outputClientData.output.items() %}
+                        <td class="connection">
+                            {% for con in outputData.connections %}
+                                {% if con == clientName + ":" + input %}
+                                    X                            
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% endfor %}
+                    {% endfor %}
                 </tr>
+
                 {% endfor %}
         {% endfor %}
         </table>
