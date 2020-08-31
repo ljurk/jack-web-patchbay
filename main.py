@@ -80,4 +80,5 @@ api.add_resource(Clients, '/')
 def getIndex():
     return render_template('index.html', clients=getClients())
 
-if __name__ == '__main__':    app.run(host='0.0.0.0', port="2323", debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port="2323", debug=True)
