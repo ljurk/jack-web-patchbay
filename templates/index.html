@@ -45,79 +45,73 @@
     <body>
 
         <table>
-        <!-- table header : clients-->
-        <tr>
-        <td/>
-        <td class="out">outputs</td>
+            <!-- table header : clients-->
+            <tr>
+            <td/>
+                <td class="out">outputs</td>
 
-        {% for clientName, clientData in clients.items() if clientData.output| length != 0%}
-        <td class="outClient" colspan="{{clientData.output | length}}"><b>{{clientName}}</b></td>
-        {% endfor %}
-        </tr>
-        <!-- sub table header : outputs -->
-        <tr>
-        <td class="in">inputs</td>
-        <td/>
-        {% for clientName, clientData in clients.items() %}
-                {% for output in  clientData.output %}
-                <td class="out"> {{output }}</td>
+                {% for clientName, clientData in clients.items()
+                   if clientData.output| length != 0%}
+                <td class="outClient" colspan="{{clientData.output | length}}">
+                    <b>{{clientName}}</b>
+                </td>
                 {% endfor %}
-        {% endfor %}
-        </tr>
+            </tr>
+            <!-- sub table header : outputs -->
+            <tr>
+                <td class="in">inputs</td>
+                <td/>
+                {% for clientName, clientData in clients.items() %}
+                    {% for output in  clientData.output %}
+                <td class="out"> {{output }}</td>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+            <!-- one row per input-->
 
-
-
-
-        <!-- one row per input-->
-
-        {% for clientName, clientData in clients.items() if clientData.input | length != 0%}
-        <tr>
-        <td class="inClient" rowspan="{{clientData.input | length }}"><b>{{clientName}}</b></td>
-
+            {% for clientName, clientData in clients.items()
+               if clientData.input | length != 0%}
+            <tr>
+                <td class="inClient" rowspan="{{clientData.input | length }}">
+                    <b>{{clientName}}</b>
+                </td>
                 {% for input in  clientData.input %}
                 {% if not loop.first%}
-                <tr>
+            <tr>
                 {% endif %}
-                    <td class="in"> {{input }}</td>
-                    <!-- connections -->
-                    {% for outputClientName, outputClientData in clients.items() if outputClientData.output| length != 0%}
-                        {% for outputName, outputData in  outputClientData.output.items() %}
-                        <td class="connection">
-                            <form action="/" method="post">
-                                <input type="hidden" id="input" name="input" value="{{clientName}}:{{input}}">
-                                <input type="hidden" id="output" name="output" value="{{outputClientName}}:{{outputName}}">
-                            {% set connected = [] %}
-                            {% for con in outputData.connections %}
-
-
-
-                                {% if con == clientName + ":" + input %}
-                                <input type="hidden" id="state" name="state" value="disconnect">
-                                <a href='#' class="toggle X"
-                                onclick='this.parentNode.submit()'>&#10003;</a>
+                <td class="in"> {{input }}</td>
+                <!-- connections -->
+                {% for outputClientName, outputClientData in clients.items() if outputClientData.output| length != 0%}
+                    {% for outputName, outputData in  outputClientData.output.items() %}
+                <td class="connection">
+                    <form action="/" method="post">
+                        <input type="hidden"
+                               name="input"
+                               value="{{clientName}}:{{input}}">
+                        <input type="hidden"
+                               name="output"
+                               value="{{outputClientName}}:{{outputName}}">
+                        {% set connected = [] %}
+                        {% for con in outputData.connections %}
+                            {% if con == clientName + ":" + input %}
+                        <input type="hidden"
+                               name="state"
+                               value="disconnect">
+                        <a href='#' class="toggle X" onclick='this.parentNode.submit()'>&#10003;</a>
                                 {% if connected.append(1) %}{% endif %}
-
-
-                                {% endif %}
-
-
-                            {% endfor %}
-                            {% if not connected %}
-                            <input type="hidden" id="state" name="state" value="connect">
-                                <a href='#' class="toggle O"
-                                onclick='this.parentNode.submit()'>&#10061;</a>
                             {% endif %}
-                        </form>
-                        </td>
                         {% endfor %}
+                        {% if not connected %}
+                        <input type="hidden" name="state" value="connect">
+                        <a href='#' class="toggle O" onclick='this.parentNode.submit()'>&#10061;</a>
+                        {% endif %}
+                    </form>
+                </td>
                     {% endfor %}
-                </tr>
-
                 {% endfor %}
+            </tr>
+            {% endfor %}
         {% endfor %}
         </table>
-
-
-
     </body>
 </html>
