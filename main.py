@@ -74,9 +74,9 @@ class Clients(Resource):
         check_output(cmd)
         return redirect(request.referrer)
 
-api.add_resource(Clients, '/')
+api.add_resource(Clients, '/clients')
 
-@app.route('/ui', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def getIndex():
     return render_template('index.html', clients=getClients())
 

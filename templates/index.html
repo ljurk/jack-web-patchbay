@@ -91,7 +91,7 @@
                 {% for outputClientName, outputClientData in clients.items() if outputClientData.output| length != 0%}
                     {% for outputName, outputData in  outputClientData.output.items() %}
                 <td class="connection">
-                    <form action="/" method="post">
+                    <form action="/clients" method="post">
                         <input type="hidden"
                                name="input"
                                value="{{clientName}}:{{input}}">

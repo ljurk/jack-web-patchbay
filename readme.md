@@ -15,4 +15,4 @@ start the server
 $ python main.py
 ```
 
-the webinterface can be accessed on this page http://localhost:2323/ui
+the webinterface can be accessed on this page http://localhost:2323/
