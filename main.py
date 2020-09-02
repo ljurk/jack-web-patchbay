@@ -1,5 +1,5 @@
 from subprocess import check_output, CalledProcessError
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, render_template_string, request, redirect
 from flask_restful import Resource, Api, reqparse
 
 app = Flask(__name__)
@@ -53,6 +53,20 @@ def getClients():
     return clientData
 
 
+class Server(Resource):
+    def get(self):
+        return self.status()
+
+    @staticmethod
+    def status():
+        status = ''
+        try:
+            status = check_output(["jack_control", "status"]).decode('utf-8')
+        except CalledProcessError as err:
+            status = str(err.output.decode('utf-8'))
+        status = status.replace('--- status\n','').replace('\n','')
+        return {'status': status}
+
 class Clients(Resource):
     def get(self):
         return getClients()
@@ -75,9 +89,15 @@ class Clients(Resource):
         return redirect(request.referrer)
 
 api.add_resource(Clients, '/clients')
+api.add_resource(Server, '/server')
 
 @app.route('/', methods=['GET', 'POST'])
 def getIndex():
+    if Server.status()['status'] != 'started':
+        return render_template_string("""Jack Server Status: {{ status }}
+                                        </br>
+                                        start Server to access patchbay""",
+                                      status=Server.status()['status'])
     return render_template('index.html', clients=getClients())
 
 if __name__ == '__main__':
